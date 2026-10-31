@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://agente-chasqui-tech-api.vercel.app",
+    "target": "https://localhost:3000",
     "secure": true,
     "changeOrigin": true
   }
