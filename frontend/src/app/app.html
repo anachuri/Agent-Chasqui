@@ -1,0 +1,26 @@
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/" aria-label="Chasqui Tech, inicio">
+      <span class="brand-mark" aria-hidden="true">◈</span>
+      <span class="brand-text">
+        <strong>Chasqui Tech</strong>
+        <small>Pagos de comercio exterior · Celo</small>
+      </span>
+    </a>
+    <div class="topbar-meta">
+      <span class="pill pill-live"><span class="dot" aria-hidden="true"></span>Celo mainnet</span>
+      <span class="pill">Modo ensayo</span>
+    </div>
+  </header>
+
+  <main class="main">
+    <router-outlet />
+  </main>
+
+  <footer class="footer">
+    <p>Chasqui Tech · Agents on Open Rails (Celo × Ripio)</p>
+    <p class="footer-note">
+      Demo: el endpoint de ensayo no mueve dinero. Los pagos reales se limitan por código.
+    </p>
+  </footer>
+</div>

@@ -1,0 +1,301 @@
+<div class="page">
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Agents on Open Rails · Stable Agents LatAm</p>
+      <h1>Liquidá comercio exterior <span>sin pasar por el dólar.</span></h1>
+      <p class="lead">
+        Chasqui Tech conecta exportador, importador y transportista, y evalúa pagos en
+        stablecoins locales de Ripio sobre Celo, siempre dentro de límites fijos de código.
+      </p>
+    </div>
+    <div class="hero-stats" aria-label="Resumen">
+      <div class="stat">
+        <span>Partes por operación</span>
+        <strong>3</strong>
+      </div>
+      <div class="stat">
+        <span>Tope por pago</span>
+        <strong>{{ formatArs(policy.maxPerPayment) }}</strong>
+      </div>
+      <div class="stat">
+        <span>Stablecoins</span>
+        <strong>wARS / wBRL</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <div class="col-main">
+      <section class="card">
+        <header class="card-head">
+          <h2>1. Elegí la operación</h2>
+          <span class="hint">Datos de ejemplo</span>
+        </header>
+
+        <div class="operation-grid">
+          @for (op of operations; track op.id) {
+            <button
+              type="button"
+              class="operation"
+              [class.selected]="op.id === selectedOperationId()"
+              (click)="selectOperation(op.id)"
+              [attr.aria-pressed]="op.id === selectedOperationId()"
+            >
+              <div class="operation-top">
+                <span class="op-id">{{ op.id }}</span>
+                @if (confirmedCount(op) === 3) {
+                  <span class="tag tag-ok">{{ confirmedCount(op) }}/3 confirmadas</span>
+                } @else {
+                  <span class="tag tag-warn">{{ confirmedCount(op) }}/3 confirmadas</span>
+                }
+              </div>
+              <p class="op-title">{{ op.title }}</p>
+              <p class="op-desc">{{ op.description }}</p>
+              <ul class="parties">
+                @for (role of roles; track role) {
+                  <li [class.pending]="!op.parties[role].confirmed">
+                    <span class="role">{{ roleLabels[role] }}</span>
+                    <span class="addr">{{ shortAddress(op.parties[role].address) }}</span>
+                    <span class="check" aria-hidden="true">
+                      {{ op.parties[role].confirmed ? '✓' : '…' }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="card">
+        <header class="card-head">
+          <h2>2. Evaluá un pago</h2>
+          <span class="hint">El servidor valida; el navegador no decide</span>
+        </header>
+
+        @let op = selectedOperation();
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="pay-form">
+          <div class="form-row">
+            <div class="field">
+              <label for="to">Destinatario (rol)</label>
+              <select id="to" formControlName="to">
+                @for (role of roles; track role) {
+                  <option [value]="role" [disabled]="!op.parties[role].confirmed">
+                    {{ roleLabels[role] }} —
+                    {{ op.parties[role].confirmed ? 'confirmado' : 'sin confirmar' }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="amount">Monto en {{ policy.currency }}</label>
+              <div class="amount-input">
+                <span aria-hidden="true">{{ policy.currency }}</span>
+                <input
+                  id="amount"
+                  formControlName="amount"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="1.500,00"
+                />
+              </div>
+              @if (form.controls.amount.invalid && form.controls.amount.touched) {
+                <p class="field-error">Ingresá un monto válido, por ejemplo 1.500,00.</p>
+              }
+            </div>
+          </div>
+
+          <div class="presets" aria-label="Montos rápidos">
+            @for (preset of presets; track preset) {
+              <button
+                type="button"
+                class="chip"
+                (click)="form.controls.amount.setValue(preset)"
+              >
+                {{ preset }}
+              </button>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" [disabled]="loading()">
+              {{ loading() ? 'Evaluando…' : 'Evaluar pago' }}
+            </button>
+            <p class="disclaimer">
+              Ensayo: <code>/api/pay</code> no mueve dinero ni usa claves privadas.
+            </p>
+          </div>
+        </form>
+      </section>
+
+      <section class="card result-card" [attr.data-status]="result()?.status">
+        <header class="card-head">
+          <h2>3. Resultado</h2>
+          @if (result()?.simulated) {
+            <span class="tag tag-warn">respuesta simulada</span>
+          }
+        </header>
+
+        @let r = result();
+
+        @if (r) {
+          <div class="result-main" aria-live="polite">
+            <span class="status-badge" [attr.data-status]="r.status">
+              {{ statusLabel(r.status) }}
+            </span>
+            <p class="result-msg">{{ message() }}</p>
+          </div>
+
+          <dl class="result-grid">
+            @if (r.amountText) {
+              <div>
+                <dt>Monto</dt>
+                <dd>{{ r.amountText }}</dd>
+              </div>
+            }
+            @if (r.operation) {
+              <div>
+                <dt>Operación</dt>
+                <dd>{{ r.operation }}</dd>
+              </div>
+            }
+            @if (r.to) {
+              <div>
+                <dt>Destinatario</dt>
+                <dd>{{ roleLabel(r.to) }}</dd>
+              </div>
+            }
+            @if (r.code) {
+              <div>
+                <dt>Código</dt>
+                <dd><code>{{ r.code }}</code></dd>
+              </div>
+            }
+            @if (r.hash) {
+              <div class="span-2">
+                <dt>Comprobante</dt>
+                <dd>
+                  @if (r.simulated) {
+                    <span class="hash">{{ r.hash }}</span>
+                    <span class="hash-note">hash simulado (ceros), no existe en la red</span>
+                  } @else {
+                    <a [href]="explorerTx + r.hash" target="_blank" rel="noopener noreferrer">
+                      Ver comprobante
+                    </a>
+                    <span class="hash">{{ r.hash }}</span>
+                  }
+                </dd>
+              </div>
+            }
+          </dl>
+
+          @if (r.error) {
+            <p class="field-error">{{ r.error }}</p>
+          }
+
+          <details class="raw">
+            <summary>Ver respuesta JSON</summary>
+            <pre>{{ r | json }}</pre>
+          </details>
+        } @else {
+          <div class="empty">
+            <span class="empty-icon" aria-hidden="true">◇</span>
+            <p>Todavía no evaluaste ningún pago. Elegí una operación, un rol y un monto.</p>
+          </div>
+        }
+
+        <div class="sim-bar">
+          <span class="sim-label">Probar estados:</span>
+          @for (sim of simulations; track sim.value) {
+            <button type="button" class="chip" (click)="simulate(sim.value)">
+              {{ sim.label }}
+            </button>
+          }
+        </div>
+
+        <div class="sim-code">
+          <label for="sim-code">Probar un código:</label>
+          <select id="sim-code" [value]="simulationCode()" (change)="setSimulationCode($event)">
+            @for (code of errorSimulations; track code) {
+              <option [value]="code">{{ code }}</option>
+            }
+          </select>
+          <button type="button" class="chip" (click)="simulateSelectedCode()">Simular</button>
+        </div>
+
+        <p class="sim-note">
+          Las simulaciones usan el rol y el monto actuales. El backend las marca como
+          <code>simulated</code> y nunca mueven dinero. El hash del <code>sent</code> simulado son
+          ceros: es falso a propósito.
+        </p>
+      </section>
+    </div>
+
+    <aside class="col-side">
+      <section class="card limits">
+        <h2>Límites fijos</h2>
+        <p class="muted">
+          Definidos en el código y en la política del backend. El agente no puede modificarlos.
+        </p>
+        <ul class="limit-list">
+          <li>
+            <span>Tope por pago</span>
+            <strong>{{ formatArs(policy.maxPerPayment) }}</strong>
+          </li>
+          <li>
+            <span>Presupuesto diario</span>
+            <strong>{{ formatArs(policy.dailyBudget) }}</strong>
+          </li>
+          <li>
+            <span>Destinatarios</span>
+            <strong>Solo partes confirmadas</strong>
+          </li>
+          <li>
+            <span>Modo por defecto</span>
+            <strong>Ensayo</strong>
+          </li>
+        </ul>
+      </section>
+
+      <section class="card steps">
+        <h2>Cómo funciona</h2>
+        <ol>
+          <li>
+            <span class="step-num">1</span>
+            <div>
+              <strong>Confirmación</strong>
+              <p>Las tres partes confirman la operación antes de cualquier pago.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <div>
+              <strong>Evaluación</strong>
+              <p>El backend valida monto, tope diario y destinatario. El tag se verifica antes de enviar.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <div>
+              <strong>Liquidación</strong>
+              <p>En producción: transferencia wARS o wBRL en Celo mainnet con tag.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="card tech">
+        <h2>Stack</h2>
+        <ul class="tech-list">
+          <li>Celo mainnet</li>
+          <li>wARS / wBRL</li>
+          <li>ERC-8004</li>
+          <li>ERC-8021</li>
+          <li>Angular 20</li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+</div>

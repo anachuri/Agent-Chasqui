@@ -1,0 +1,6 @@
+{
+  "currency": "ARS",
+  "maxPerPayment": "2",
+  "dailyBudget": "5",
+  "allowedRecipients": ["0x0000000000000000000000000000000000000000"]
+}

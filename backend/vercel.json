@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "echo \"sin dependencias: /api/pay no las usa\"",
+  "outputDirectory": "public"
+}

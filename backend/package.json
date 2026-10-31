@@ -1,0 +1,16 @@
+{
+  "name": "stable-agent-latam",
+  "version": "0.2.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "register": "node --env-file=.env scripts/register-8004.mjs",
+    "dry-run": "node --env-file=.env scripts/first-payment.mjs",
+    "pay": "node --env-file=.env scripts/first-payment.mjs"
+  },
+  "dependencies": {
+    "@celo/attribution-tags": "latest",
+    "viem": "^2"
+  }
+}
