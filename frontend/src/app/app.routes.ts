@@ -4,7 +4,10 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
-    title: 'Chasqui Tech · Pagos en stablecoins',
+  },
+  {
+    path: 'como-funciona',
+    loadComponent: () => import('./pages/how-it-works/how-it-works').then((m) => m.HowItWorks),
   },
   { path: '**', redirectTo: '' },
 ];

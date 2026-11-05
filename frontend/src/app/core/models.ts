@@ -1,3 +1,5 @@
+import { TranslationKey } from './i18n/translations';
+
 export type PartyRole = 'exportador' | 'importador' | 'transportista';
 
 export interface Party {
@@ -7,12 +9,19 @@ export interface Party {
 
 export interface OperationView {
   id: string;
-  title: string;
-  description: string;
+  titleKey: TranslationKey;
+  descriptionKey: TranslationKey;
   parties: Record<PartyRole, Party>;
 }
 
 export type PaymentStatus = 'dry-run' | 'sent' | 'rejected' | 'blocked' | 'failed';
+
+export interface PolicyView {
+  currency: string;
+  maxPerPaymentCents: string;
+  dailyBudgetCents: string;
+  mode: string;
+}
 
 export interface PaymentRequest {
   operation: string;

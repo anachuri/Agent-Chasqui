@@ -4,6 +4,7 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import handler from '../api/pay.js';
+import policyHandler from '../api/policy.js';
 
 const PORT = Number(process.env.PORT ?? 3000);
 const HOST = process.env.HOST ?? '127.0.0.1';
@@ -16,6 +17,21 @@ function readBody(req) {
     req.on('end', () => resolve(raw));
     req.on('error', reject);
   });
+}
+
+// Adaptador mínimo para la firma req/res de Vercel Functions.
+function vercelResponse(res) {
+  const mockRes = {
+    setHeader: (key, value) => res.setHeader(key, value),
+    status: (code) => { res.statusCode = code; return mockRes; },
+    json: (value) => {
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.end(JSON.stringify(value));
+      return mockRes;
+    },
+    end: () => { res.end(); return mockRes; },
+  };
+  return mockRes;
 }
 
 const server = createServer(async (req, res) => {
@@ -33,9 +49,22 @@ const server = createServer(async (req, res) => {
     return;
   }
 
+  if (url.pathname === '/api/policy') {
+    try {
+      await policyHandler({ method: req.method, query: Object.fromEntries(url.searchParams) }, vercelResponse(res));
+    } catch (error) {
+      console.error(error);
+      if (!res.headersSent) {
+        res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      }
+      res.end(JSON.stringify({ status: 'failed', code: 'INTERNAL_ERROR' }));
+    }
+    return;
+  }
+
   if (url.pathname !== '/api/pay') {
     res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ error: 'Not found', hint: 'Usá POST /api/pay o GET /agent.json' }));
+    res.end(JSON.stringify({ error: 'Not found', hint: 'Usá POST /api/pay, GET /api/policy o GET /agent.json' }));
     return;
   }
 
@@ -45,22 +74,10 @@ const server = createServer(async (req, res) => {
     try { body = JSON.parse(raw); } catch { body = null; }
   }
 
-  // Adaptador mínimo para la firma req/res de Vercel Functions.
-  const mockRes = {
-    setHeader: (key, value) => res.setHeader(key, value),
-    status: (code) => { res.statusCode = code; return mockRes; },
-    json: (value) => {
-      res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      res.end(JSON.stringify(value));
-      return mockRes;
-    },
-    end: () => { res.end(); return mockRes; },
-  };
-
   try {
     await handler(
       { method: req.method, body, query: Object.fromEntries(url.searchParams) },
-      mockRes,
+      vercelResponse(res),
     );
   } catch (error) {
     console.error(error);

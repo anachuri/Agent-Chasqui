@@ -1,41 +1,58 @@
 import { JsonPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   AMOUNT_PRESETS,
-  DEMO_POLICY,
   OPERATIONS,
   ROLES,
-  ROLE_LABELS,
+  ROLE_LABEL_KEYS,
 } from '../../core/demo-data';
+import { TranslationService } from '../../core/i18n/translation.service';
+import { Language } from '../../core/i18n/translations';
 import {
-  ERROR_MESSAGES,
+  ERROR_MESSAGE_KEYS,
   ERROR_SIMULATIONS,
-  FALLBACK_ERROR_MESSAGE,
+  FALLBACK_ERROR_KEY,
   SIMULATIONS,
-  STATUS_LABELS,
+  STATUS_LABEL_KEYS,
+  STATUS_MESSAGE_KEYS,
 } from '../../core/messages';
-import { OperationView, PartyRole, PaymentRequest, PaymentResult } from '../../core/models';
+import {
+  OperationView,
+  PartyRole,
+  PaymentRequest,
+  PaymentResult,
+  PolicyView,
+} from '../../core/models';
 import { PaymentService } from '../../core/payment.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ReactiveFormsModule, JsonPipe],
+  imports: [ReactiveFormsModule, JsonPipe, RouterLink],
   templateUrl: './dashboard.html',
 })
 export class Dashboard {
   private readonly paymentService = inject(PaymentService);
   private readonly fb = inject(FormBuilder);
+  readonly i18n = inject(TranslationService);
 
   readonly roles = ROLES;
-  readonly roleLabels = ROLE_LABELS;
   readonly operations = OPERATIONS;
-  readonly policy = DEMO_POLICY;
-  readonly presets = AMOUNT_PRESETS;
+  readonly policy = signal<PolicyView | null>(null);
+  readonly currency = computed(() => this.policy()?.currency ?? 'ARS');
+  readonly presets = computed(() => AMOUNT_PRESETS[this.i18n.language()]);
   readonly simulations = SIMULATIONS;
   readonly errorSimulations = ERROR_SIMULATIONS;
-  readonly explorerTx = 'https://celoscan.io/tx/';
+  readonly explorerTx = environment.explorerTx;
+  readonly explorerAddress = environment.explorerUrl;
+  readonly agentWallet = environment.agentWallet;
+  readonly agentTag = environment.agentTag;
+  readonly chainId = environment.chainId;
   readonly simulationCode = signal(ERROR_SIMULATIONS[0]);
+
+  private previousLanguage: Language = this.i18n.language();
 
   readonly selectedOperationId = signal(OPERATIONS[0].id);
   readonly selectedOperation = computed(
@@ -45,7 +62,7 @@ export class Dashboard {
   readonly form = this.fb.nonNullable.group({
     to: ['transportista' as PartyRole, Validators.required],
     amount: [
-      '1.500,00',
+      AMOUNT_PRESETS[this.i18n.language()][0],
       [Validators.required, Validators.pattern(/^\s*\$?\s*[\d.,]+\s*$/)],
     ],
   });
@@ -57,21 +74,31 @@ export class Dashboard {
     const result = this.result();
     if (!result) return '';
     if (result.code) {
-      return ERROR_MESSAGES[result.code] ?? FALLBACK_ERROR_MESSAGE;
+      return this.i18n.t(ERROR_MESSAGE_KEYS[result.code] ?? FALLBACK_ERROR_KEY);
     }
-    switch (result.status) {
-      case 'dry-run':
-        return 'Así quedaría el pago. No se movió dinero.';
-      case 'sent':
-        return 'El pago se envió correctamente.';
-      case 'blocked':
-        return 'Pago detenido por una verificación interna.';
-      case 'failed':
-        return 'No se pudo enviar. Probá de nuevo más tarde.';
-      default:
-        return FALLBACK_ERROR_MESSAGE;
-    }
+    return this.i18n.t(STATUS_MESSAGE_KEYS[result.status]);
   });
+
+  constructor() {
+    this.i18n.setPageTitle('meta.title');
+
+    effect(() => {
+      const language = this.i18n.language();
+      if (language === this.previousLanguage) return;
+
+      const currentAmount = this.form.controls.amount.value;
+      const previousDefault = AMOUNT_PRESETS[this.previousLanguage][0];
+      if (currentAmount === previousDefault) {
+        this.form.controls.amount.setValue(AMOUNT_PRESETS[language][0]);
+      }
+      this.previousLanguage = language;
+    });
+
+    this.paymentService.policy().subscribe({
+      next: (policy) => this.policy.set(policy),
+      error: () => this.policy.set(null),
+    });
+  }
 
   selectOperation(id: string): void {
     this.selectedOperationId.set(id);
@@ -106,12 +133,12 @@ export class Dashboard {
   }
 
   statusLabel(status: PaymentResult['status']): string {
-    return STATUS_LABELS[status];
+    return this.i18n.t(STATUS_LABEL_KEYS[status]);
   }
 
   roleLabel(value?: string): string {
-    if (value && value in ROLE_LABELS) {
-      return ROLE_LABELS[value as PartyRole];
+    if (value && value in ROLE_LABEL_KEYS) {
+      return this.i18n.t(ROLE_LABEL_KEYS[value as PartyRole]);
     }
     return value ?? '';
   }
@@ -124,8 +151,10 @@ export class Dashboard {
     return `${address.slice(0, 6)}…${address.slice(-4)}`;
   }
 
-  formatArs(value: number): string {
-    return `ARS ${new Intl.NumberFormat('es-AR').format(value)}`;
+  formatArs(cents: string | number | null | undefined): string {
+    if (cents === null || cents === undefined || cents === '') return '—';
+    const value = Number(cents) / 100;
+    return `${this.currency()} ${new Intl.NumberFormat(this.i18n.locale()).format(value)}`;
   }
 
   private buildRequest(): PaymentRequest {

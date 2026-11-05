@@ -56,16 +56,25 @@
           },
           "defaultConfiguration": "production"
         },
-        "serve": {
-          "builder": "@angular/build:dev-server",
-          "configurations": {
-            "production": {
-              "buildTarget": "frontend:build:production"
-            },
-            "development": {
-              "buildTarget": "frontend:build:development"
-            }
-          },
+        
+"serve": {
+  "builder": "@angular/build:dev-server",
+  "options": {
+    "allowedHosts": [
+      "frontless-incremental-elba.ngrok-free.dev"
+    ]
+  },
+  "configurations": {
+    "production": {
+      "buildTarget": "frontend:build:production"
+    },
+    "development": {
+      "buildTarget": "frontend:build:development"
+    }
+  },
+  "defaultConfiguration": "development"
+}
+,
           "defaultConfiguration": "development"
         },
         "extract-i18n": {

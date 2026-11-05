@@ -1,0 +1,353 @@
+<div class="page">
+  <a class="back-link" routerLink="/">{{ i18n.t('how.back') }}</a>
+
+  <section class="hero howto-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ i18n.t('dashboard.eyebrow') }}</p>
+      <h1>
+        {{ i18n.t('how.heroTitleLead') }}
+        <span>{{ i18n.t('how.heroTitleHighlight') }}</span>
+      </h1>
+      <p class="lead">{{ i18n.t('how.heroLead') }}</p>
+      <div class="howto-actions">
+        <a class="btn btn-primary" routerLink="/">{{ i18n.t('how.tryDemo') }}</a>
+        <a
+          class="btn btn-ghost"
+          href="https://github.com/anachuri/Agent-Chasqui"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ i18n.t('how.viewCode') }}
+        </a>
+      </div>
+    </div>
+    <div class="hero-stats" [attr.aria-label]="i18n.t('dashboard.summaryAria')">
+      <div class="stat">
+        <span>{{ i18n.t('dashboard.statsParties') }}</span>
+        <strong>3</strong>
+      </div>
+      <div class="stat">
+        <span>{{ i18n.t('dashboard.statsCurrencies') }}</span>
+        <strong>{{ i18n.t('dashboard.statsCurrenciesValue') }}</strong>
+      </div>
+      <div class="stat">
+        <span>{{ i18n.t('how.statsLimits') }}</span>
+        <strong>{{ i18n.t('how.statsLimitsValue') }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="howto-section" aria-labelledby="resumen">
+    <div class="howto-section-head">
+      <h2 id="resumen">{{ i18n.t('how.summaryTitle') }}</h2>
+      <p>{{ i18n.t('how.summaryLead') }}</p>
+    </div>
+
+    <div class="howto-grid">
+      <article class="howto-card">
+        <span class="howto-num">1</span>
+        <h3>{{ i18n.t('how.summary1Title') }}</h3>
+        <p>{{ i18n.t('how.summary1Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-num">2</span>
+        <h3>{{ i18n.t('how.summary2Title') }}</h3>
+        <p>{{ i18n.t('how.summary2Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-num">3</span>
+        <h3>{{ i18n.t('how.summary3Title') }}</h3>
+        <p>{{ i18n.t('how.summary3Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-num">4</span>
+        <h3>{{ i18n.t('how.summary4Title') }}</h3>
+        <p>{{ i18n.t('how.summary4Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-num">5</span>
+        <h3>{{ i18n.t('how.summary5Title') }}</h3>
+        <p>{{ i18n.t('how.summary5Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-num">6</span>
+        <h3>{{ i18n.t('how.summary6Title') }}</h3>
+        <p>{{ i18n.t('how.summary6Text') }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="howto-section" aria-labelledby="problema">
+    <div class="howto-section-head">
+      <h2 id="problema">{{ i18n.t('how.problemTitle') }}</h2>
+      <p>{{ i18n.t('how.problemLead') }}</p>
+    </div>
+
+    <div class="howto-grid howto-grid-3">
+      <article class="howto-card">
+        <span class="howto-kicker">01</span>
+        <h3>{{ i18n.t('how.problem1Title') }}</h3>
+        <p>{{ i18n.t('how.problem1Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-kicker">02</span>
+        <h3>{{ i18n.t('how.problem2Title') }}</h3>
+        <p>{{ i18n.t('how.problem2Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-kicker">03</span>
+        <h3>{{ i18n.t('how.problem3Title') }}</h3>
+        <p>{{ i18n.t('how.problem3Text') }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="howto-section" aria-labelledby="flujo">
+    <div class="howto-section-head">
+      <h2 id="flujo">{{ i18n.t('how.flowTitle') }}</h2>
+      <p>{{ i18n.t('how.flowLead') }}</p>
+    </div>
+
+    <ol class="flow">
+      <li>
+        <span class="flow-num">1</span>
+        <div>
+          <h3>{{ i18n.t('how.flow1Title') }}</h3>
+          <p>{{ i18n.t('how.flow1Text') }}</p>
+        </div>
+      </li>
+      <li>
+        <span class="flow-num">2</span>
+        <div>
+          <h3>{{ i18n.t('how.flow2Title') }}</h3>
+          <p>{{ i18n.t('how.flow2Text') }}</p>
+        </div>
+      </li>
+      <li>
+        <span class="flow-num">3</span>
+        <div>
+          <h3>{{ i18n.t('how.flow3Title') }}</h3>
+          <p>{{ i18n.t('how.flow3Text') }}</p>
+        </div>
+      </li>
+      <li>
+        <span class="flow-num">4</span>
+        <div>
+          <h3>{{ i18n.t('how.flow4Title') }}</h3>
+          <p>{{ i18n.t('how.flow4Text') }}</p>
+        </div>
+      </li>
+      <li>
+        <span class="flow-num">5</span>
+        <div>
+          <h3>{{ i18n.t('how.flow5Title') }}</h3>
+          <p>{{ i18n.t('how.flow5Text') }}</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="howto-section" aria-labelledby="ejemplo">
+    <div class="howto-section-head">
+      <h2 id="ejemplo">{{ i18n.t('how.exampleTitle') }}</h2>
+      <p>{{ i18n.t('how.exampleLead') }}</p>
+    </div>
+
+    <div class="example-wrap">
+      <table class="example-table">
+        <thead>
+          <tr>
+            <th>{{ i18n.t('how.tableSituation') }}</th>
+            <th>{{ i18n.t('how.tableAction') }}</th>
+            <th>{{ i18n.t('how.tableResult') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ i18n.t('how.example1Situation') }}</td>
+            <td>{{ i18n.t('how.example1Action') }}</td>
+            <td><span class="status-dot status-dry"></span>{{ i18n.t('how.example1Result') }}</td>
+          </tr>
+          <tr>
+            <td>{{ i18n.t('how.example2Situation') }}</td>
+            <td>{{ i18n.t('how.example2Action') }}</td>
+            <td><span class="status-dot status-warn"></span>{{ i18n.t('how.example2Result') }}</td>
+          </tr>
+          <tr>
+            <td>{{ i18n.t('how.example3Situation') }}</td>
+            <td>{{ i18n.t('how.example3Action') }}</td>
+            <td><span class="status-dot status-warn"></span>{{ i18n.t('how.example3Result') }}</td>
+          </tr>
+          <tr>
+            <td>{{ i18n.t('how.example4Situation') }}</td>
+            <td>{{ i18n.t('how.example4Action') }}</td>
+            <td><span class="status-dot status-red"></span>{{ i18n.t('how.example4Result') }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="howto-callout">
+      <strong>{{ i18n.t('how.calloutTitle') }}</strong>
+      <p>{{ i18n.t('how.calloutText') }}</p>
+    </div>
+  </section>
+
+  <section class="howto-section" aria-labelledby="debajo">
+    <div class="howto-section-head">
+      <h2 id="debajo">{{ i18n.t('how.underTitle') }}</h2>
+      <p>{{ i18n.t('how.underLead') }}</p>
+    </div>
+
+    <div class="howto-grid howto-grid-3">
+      <article class="howto-card">
+        <span class="howto-kicker">{{ i18n.t('how.under1Kicker') }}</span>
+        <h3>{{ i18n.t('how.under1Title') }}</h3>
+        <p>{{ i18n.t('how.under1Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-kicker">{{ i18n.t('how.under2Kicker') }}</span>
+        <h3>{{ i18n.t('how.under2Title') }}</h3>
+        <p>{{ i18n.t('how.under2Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-kicker">{{ i18n.t('how.under3Kicker') }}</span>
+        <h3>{{ i18n.t('how.under3Title') }}</h3>
+        <p>{{ i18n.t('how.under3Text') }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="howto-section" aria-labelledby="confianza">
+    <div class="howto-section-head">
+      <h2 id="confianza">{{ i18n.t('how.trustTitle') }}</h2>
+      <p>{{ i18n.t('how.trustLead') }}</p>
+    </div>
+
+    <div class="howto-split">
+      <div class="card">
+        <h3 class="card-subtitle">{{ i18n.t('how.cannotTitle') }}</h3>
+        <ul class="check-list">
+          <li>{{ i18n.t('how.cannot1') }}</li>
+          <li>{{ i18n.t('how.cannot2') }}</li>
+          <li>{{ i18n.t('how.cannot3') }}</li>
+          <li>{{ i18n.t('how.cannot4') }}</li>
+          <li>{{ i18n.t('how.cannot5') }}</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="card-subtitle">{{ i18n.t('how.canTitle') }}</h3>
+        <ul class="check-list">
+          <li>{{ i18n.t('how.can1') }}</li>
+          <li>{{ i18n.t('how.can2') }}</li>
+          <li>{{ i18n.t('how.can3') }}</li>
+          <li>{{ i18n.t('how.can4') }}</li>
+          <li>{{ i18n.t('how.can5') }}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="pitch-quote">
+    <p>{{ i18n.t('how.quote') }}</p>
+  </section>
+
+  <section class="howto-section" aria-labelledby="estado">
+    <div class="howto-section-head">
+      <h2 id="estado">{{ i18n.t('how.todayTitle') }}</h2>
+      <p>{{ i18n.t('how.todayLead') }}</p>
+    </div>
+
+    <div class="howto-grid">
+      <article class="howto-card">
+        <span class="howto-kicker">{{ i18n.t('how.today1Kicker') }}</span>
+        <h3>{{ i18n.t('how.today1Title') }}</h3>
+        <p>{{ i18n.t('how.today1Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-kicker">{{ i18n.t('how.today2Kicker') }}</span>
+        <h3>{{ i18n.t('how.today2Title') }}</h3>
+        <p>{{ i18n.t('how.today2Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-kicker">{{ i18n.t('how.today3Kicker') }}</span>
+        <h3>{{ i18n.t('how.today3Title') }}</h3>
+        <p>{{ i18n.t('how.today3Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-kicker">{{ i18n.t('how.today4Kicker') }}</span>
+        <h3>{{ i18n.t('how.today4Title') }}</h3>
+        <p>{{ i18n.t('how.today4Text') }}</p>
+      </article>
+      <article class="howto-card">
+        <span class="howto-kicker">{{ i18n.t('how.today5Kicker') }}</span>
+        <h3>{{ i18n.t('how.today5Title') }}</h3>
+        <p>{{ i18n.t('how.today5Text') }}</p>
+      </article>
+    </div>
+  </section>
+
+  <details class="tech-details howto-details">
+    <summary>{{ i18n.t('how.jurySummary') }}</summary>
+    <dl class="tech-facts">
+      <div>
+        <dt>{{ i18n.t('dashboard.network') }}</dt>
+        <dd>{{ i18n.t('dashboard.celoMainnet', { chainId: chainId }) }}</dd>
+      </div>
+      <div>
+        <dt>{{ i18n.t('dashboard.statsCurrencies') }}</dt>
+        <dd>{{ i18n.t('how.currenciesValue') }}</dd>
+      </div>
+      <div>
+        <dt>{{ i18n.t('dashboard.identity') }}</dt>
+        <dd>
+          ERC-8004 ·
+          <a [href]="explorerAddress + agentWallet" target="_blank" rel="noopener noreferrer">
+            {{ shortWallet }}
+          </a>
+        </dd>
+      </div>
+      <div>
+        <dt>{{ i18n.t('how.attribution') }}</dt>
+        <dd><code>{{ agentTag }}</code></dd>
+      </div>
+      <div class="span-2">
+        <dt>{{ i18n.t('how.howTested') }}</dt>
+        <dd>{{ i18n.t('how.howTestedText') }}</dd>
+      </div>
+    </dl>
+  </details>
+
+  <section class="howto-section" aria-labelledby="links">
+    <div class="howto-section-head">
+      <h2 id="links">{{ i18n.t('how.linksTitle') }}</h2>
+    </div>
+    <div class="howto-links">
+      <a class="btn btn-primary" routerLink="/">{{ i18n.t('how.openDemo') }}</a>
+      <a
+        class="btn btn-ghost"
+        href="https://github.com/anachuri/Agent-Chasqui"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ i18n.t('how.repo') }}
+      </a>
+      <a
+        class="btn btn-ghost"
+        href="https://agent-chasqui-backend.vercel.app/agent.json"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ i18n.t('how.agentCard') }}
+      </a>
+      <a
+        class="btn btn-ghost"
+        [href]="explorerAddress + agentWallet"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ i18n.t('how.agentWallet') }}
+      </a>
+    </div>
+  </section>
+</div>

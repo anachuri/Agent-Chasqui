@@ -17,6 +17,22 @@ describe('PaymentService', () => {
 
   afterEach(() => http.verify());
 
+  it('gets the policy limits from /api/policy', () => {
+    service.policy().subscribe((policy) => {
+      expect(policy.maxPerPaymentCents).toBe('500000');
+      expect(policy.dailyBudgetCents).toBe('2000000');
+    });
+
+    const req = http.expectOne('/api/policy');
+    expect(req.request.method).toBe('GET');
+    req.flush({
+      currency: 'ARS',
+      maxPerPaymentCents: '500000',
+      dailyBudgetCents: '2000000',
+      mode: 'dry-run',
+    });
+  });
+
   it('posts the payment request to /api/pay', () => {
     service
       .pay({ operation: 'OP-DEMO-1', to: 'transportista', amount: '1.500,00' })

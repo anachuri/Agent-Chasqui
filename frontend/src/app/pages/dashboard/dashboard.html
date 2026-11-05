@@ -1,25 +1,28 @@
 <div class="page">
   <section class="hero">
     <div class="hero-copy">
-      <p class="eyebrow">Agents on Open Rails · Stable Agents LatAm</p>
-      <h1>Liquidá comercio exterior <span>sin pasar por el dólar.</span></h1>
-      <p class="lead">
-        Chasqui Tech conecta exportador, importador y transportista, y evalúa pagos en
-        stablecoins locales de Ripio sobre Celo, siempre dentro de límites fijos de código.
+      <p class="eyebrow">{{ i18n.t('dashboard.eyebrow') }}</p>
+      <h1>
+        {{ i18n.t('dashboard.heroTitleLead') }}
+        <span>{{ i18n.t('dashboard.heroTitleHighlight') }}</span>
+      </h1>
+      <p class="lead">{{ i18n.t('dashboard.heroLead') }}</p>
+      <p class="hero-link">
+        <a class="text-link" routerLink="/como-funciona">{{ i18n.t('dashboard.heroLink') }}</a>
       </p>
     </div>
-    <div class="hero-stats" aria-label="Resumen">
+    <div class="hero-stats" [attr.aria-label]="i18n.t('dashboard.summaryAria')">
       <div class="stat">
-        <span>Partes por operación</span>
+        <span>{{ i18n.t('dashboard.statsParties') }}</span>
         <strong>3</strong>
       </div>
       <div class="stat">
-        <span>Tope por pago</span>
-        <strong>{{ formatArs(policy.maxPerPayment) }}</strong>
+        <span>{{ i18n.t('dashboard.statsCap') }}</span>
+        <strong>{{ formatArs(policy()?.maxPerPaymentCents) }}</strong>
       </div>
       <div class="stat">
-        <span>Stablecoins</span>
-        <strong>wARS / wBRL</strong>
+        <span>{{ i18n.t('dashboard.statsCurrencies') }}</span>
+        <strong>{{ i18n.t('dashboard.statsCurrenciesValue') }}</strong>
       </div>
     </div>
   </section>
@@ -28,8 +31,8 @@
     <div class="col-main">
       <section class="card">
         <header class="card-head">
-          <h2>1. Elegí la operación</h2>
-          <span class="hint">Datos de ejemplo</span>
+          <h2>{{ i18n.t('dashboard.operationTitle') }}</h2>
+          <span class="hint">{{ i18n.t('dashboard.operationHint') }}</span>
         </header>
 
         <div class="operation-grid">
@@ -44,18 +47,28 @@
               <div class="operation-top">
                 <span class="op-id">{{ op.id }}</span>
                 @if (confirmedCount(op) === 3) {
-                  <span class="tag tag-ok">{{ confirmedCount(op) }}/3 confirmadas</span>
+                  <span class="tag tag-ok">{{
+                    i18n.t('dashboard.confirmedCount', { count: confirmedCount(op) })
+                  }}</span>
                 } @else {
-                  <span class="tag tag-warn">{{ confirmedCount(op) }}/3 confirmadas</span>
+                  <span class="tag tag-warn">{{
+                    i18n.t('dashboard.confirmedCount', { count: confirmedCount(op) })
+                  }}</span>
                 }
               </div>
-              <p class="op-title">{{ op.title }}</p>
-              <p class="op-desc">{{ op.description }}</p>
+              <p class="op-title">{{ i18n.t(op.titleKey) }}</p>
+              <p class="op-desc">{{ i18n.t(op.descriptionKey) }}</p>
               <ul class="parties">
                 @for (role of roles; track role) {
                   <li [class.pending]="!op.parties[role].confirmed">
-                    <span class="role">{{ roleLabels[role] }}</span>
-                    <span class="addr">{{ shortAddress(op.parties[role].address) }}</span>
+                    <span class="role">{{ roleLabel(role) }}</span>
+                    <span class="party-state">
+                      {{
+                        op.parties[role].confirmed
+                          ? i18n.t('dashboard.confirmed')
+                          : i18n.t('dashboard.unconfirmed')
+                      }}
+                    </span>
                     <span class="check" aria-hidden="true">
                       {{ op.parties[role].confirmed ? '✓' : '…' }}
                     </span>
@@ -69,8 +82,8 @@
 
       <section class="card">
         <header class="card-head">
-          <h2>2. Evaluá un pago</h2>
-          <span class="hint">El servidor valida; el navegador no decide</span>
+          <h2>{{ i18n.t('dashboard.payTitle') }}</h2>
+          <span class="hint">{{ i18n.t('dashboard.payHint') }}</span>
         </header>
 
         @let op = selectedOperation();
@@ -78,42 +91,44 @@
         <form [formGroup]="form" (ngSubmit)="submit()" class="pay-form">
           <div class="form-row">
             <div class="field">
-              <label for="to">Destinatario (rol)</label>
+              <label for="to">{{ i18n.t('dashboard.recipientRole') }}</label>
               <select id="to" formControlName="to">
                 @for (role of roles; track role) {
                   <option [value]="role" [disabled]="!op.parties[role].confirmed">
-                    {{ roleLabels[role] }} —
-                    {{ op.parties[role].confirmed ? 'confirmado' : 'sin confirmar' }}
+                    {{ roleLabel(role) }} —
+                    {{
+                      op.parties[role].confirmed
+                        ? i18n.t('dashboard.confirmed')
+                        : i18n.t('dashboard.unconfirmed')
+                    }}
                   </option>
                 }
               </select>
             </div>
 
             <div class="field">
-              <label for="amount">Monto en {{ policy.currency }}</label>
+              <label for="amount">{{
+                i18n.t('dashboard.amountIn', { currency: currency() })
+              }}</label>
               <div class="amount-input">
-                <span aria-hidden="true">{{ policy.currency }}</span>
+                <span aria-hidden="true">{{ currency() }}</span>
                 <input
                   id="amount"
                   formControlName="amount"
                   inputmode="decimal"
                   autocomplete="off"
-                  placeholder="1.500,00"
+                  [placeholder]="i18n.t('dashboard.amountPlaceholder')"
                 />
               </div>
               @if (form.controls.amount.invalid && form.controls.amount.touched) {
-                <p class="field-error">Ingresá un monto válido, por ejemplo 1.500,00.</p>
+                <p class="field-error">{{ i18n.t('dashboard.amountError') }}</p>
               }
             </div>
           </div>
 
-          <div class="presets" aria-label="Montos rápidos">
-            @for (preset of presets; track preset) {
-              <button
-                type="button"
-                class="chip"
-                (click)="form.controls.amount.setValue(preset)"
-              >
+          <div class="presets" [attr.aria-label]="i18n.t('dashboard.presetsAria')">
+            @for (preset of presets(); track preset) {
+              <button type="button" class="chip" (click)="form.controls.amount.setValue(preset)">
                 {{ preset }}
               </button>
             }
@@ -121,20 +136,19 @@
 
           <div class="form-actions">
             <button class="btn btn-primary" type="submit" [disabled]="loading()">
-              {{ loading() ? 'Evaluando…' : 'Evaluar pago' }}
+              {{
+                loading() ? i18n.t('dashboard.evaluating') : i18n.t('dashboard.evaluate')
+              }}
             </button>
-            <p class="disclaimer">
-              Ensayo: <code>/api/pay</code> no mueve dinero ni usa claves privadas.
-            </p>
           </div>
         </form>
       </section>
 
       <section class="card result-card" [attr.data-status]="result()?.status">
         <header class="card-head">
-          <h2>3. Resultado</h2>
+          <h2>{{ i18n.t('dashboard.resultTitle') }}</h2>
           @if (result()?.simulated) {
-            <span class="tag tag-warn">respuesta simulada</span>
+            <span class="tag tag-warn">{{ i18n.t('dashboard.simulatedTag') }}</span>
           }
         </header>
 
@@ -151,42 +165,26 @@
           <dl class="result-grid">
             @if (r.amountText) {
               <div>
-                <dt>Monto</dt>
+                <dt>{{ i18n.t('dashboard.amountLabel') }}</dt>
                 <dd>{{ r.amountText }}</dd>
               </div>
             }
             @if (r.operation) {
               <div>
-                <dt>Operación</dt>
+                <dt>{{ i18n.t('dashboard.operationLabel') }}</dt>
                 <dd>{{ r.operation }}</dd>
               </div>
             }
             @if (r.to) {
               <div>
-                <dt>Destinatario</dt>
+                <dt>{{ i18n.t('dashboard.recipientLabel') }}</dt>
                 <dd>{{ roleLabel(r.to) }}</dd>
               </div>
             }
             @if (r.code) {
               <div>
-                <dt>Código</dt>
+                <dt>{{ i18n.t('dashboard.codeLabel') }}</dt>
                 <dd><code>{{ r.code }}</code></dd>
-              </div>
-            }
-            @if (r.hash) {
-              <div class="span-2">
-                <dt>Comprobante</dt>
-                <dd>
-                  @if (r.simulated) {
-                    <span class="hash">{{ r.hash }}</span>
-                    <span class="hash-note">hash simulado (ceros), no existe en la red</span>
-                  } @else {
-                    <a [href]="explorerTx + r.hash" target="_blank" rel="noopener noreferrer">
-                      Ver comprobante
-                    </a>
-                    <span class="hash">{{ r.hash }}</span>
-                  }
-                </dd>
               </div>
             }
           </dl>
@@ -196,105 +194,143 @@
           }
 
           <details class="raw">
-            <summary>Ver respuesta JSON</summary>
+            <summary>{{ i18n.t('dashboard.techSummary') }}</summary>
+            @if (r.hash) {
+              <dl class="result-grid">
+                <div class="span-2">
+                  <dt>{{ i18n.t('dashboard.receipt') }}</dt>
+                  <dd>
+                    @if (r.simulated) {
+                      <span class="hash">{{ r.hash }}</span>
+                      <span class="hash-note">{{ i18n.t('dashboard.simulatedHashNote') }}</span>
+                    } @else {
+                      <a [href]="explorerTx + r.hash" target="_blank" rel="noopener noreferrer">
+                        {{ i18n.t('dashboard.viewReceipt') }}
+                      </a>
+                      <span class="hash">{{ r.hash }}</span>
+                    }
+                  </dd>
+                </div>
+              </dl>
+            }
             <pre>{{ r | json }}</pre>
           </details>
         } @else {
           <div class="empty">
             <span class="empty-icon" aria-hidden="true">◇</span>
-            <p>Todavía no evaluaste ningún pago. Elegí una operación, un rol y un monto.</p>
+            <p>{{ i18n.t('dashboard.empty') }}</p>
           </div>
         }
 
         <div class="sim-bar">
-          <span class="sim-label">Probar estados:</span>
+          <span class="sim-label">{{ i18n.t('dashboard.simBar') }}</span>
           @for (sim of simulations; track sim.value) {
             <button type="button" class="chip" (click)="simulate(sim.value)">
-              {{ sim.label }}
+              {{ i18n.t(sim.labelKey) }}
             </button>
           }
         </div>
 
         <div class="sim-code">
-          <label for="sim-code">Probar un código:</label>
+          <label for="sim-code">{{ i18n.t('dashboard.simCodeLabel') }}</label>
           <select id="sim-code" [value]="simulationCode()" (change)="setSimulationCode($event)">
             @for (code of errorSimulations; track code) {
               <option [value]="code">{{ code }}</option>
             }
           </select>
-          <button type="button" class="chip" (click)="simulateSelectedCode()">Simular</button>
+          <button type="button" class="chip" (click)="simulateSelectedCode()">
+            {{ i18n.t('dashboard.simulate') }}
+          </button>
         </div>
-
-        <p class="sim-note">
-          Las simulaciones usan el rol y el monto actuales. El backend las marca como
-          <code>simulated</code> y nunca mueven dinero. El hash del <code>sent</code> simulado son
-          ceros: es falso a propósito.
-        </p>
       </section>
     </div>
 
     <aside class="col-side">
       <section class="card limits">
-        <h2>Límites fijos</h2>
-        <p class="muted">
-          Definidos en el código y en la política del backend. El agente no puede modificarlos.
-        </p>
+        <h2>{{ i18n.t('dashboard.limitsTitle') }}</h2>
+        <p class="muted">{{ i18n.t('dashboard.limitsNote') }}</p>
         <ul class="limit-list">
           <li>
-            <span>Tope por pago</span>
-            <strong>{{ formatArs(policy.maxPerPayment) }}</strong>
+            <span>{{ i18n.t('dashboard.perPayment') }}</span>
+            <strong>{{ formatArs(policy()?.maxPerPaymentCents) }}</strong>
           </li>
           <li>
-            <span>Presupuesto diario</span>
-            <strong>{{ formatArs(policy.dailyBudget) }}</strong>
+            <span>{{ i18n.t('dashboard.dailyBudget') }}</span>
+            <strong>{{ formatArs(policy()?.dailyBudgetCents) }}</strong>
           </li>
           <li>
-            <span>Destinatarios</span>
-            <strong>Solo partes confirmadas</strong>
-          </li>
-          <li>
-            <span>Modo por defecto</span>
-            <strong>Ensayo</strong>
+            <span>{{ i18n.t('dashboard.recipients') }}</span>
+            <strong>{{ i18n.t('dashboard.onlyConfirmed') }}</strong>
           </li>
         </ul>
       </section>
 
       <section class="card steps">
-        <h2>Cómo funciona</h2>
+        <h2>{{ i18n.t('dashboard.stepsTitle') }}</h2>
         <ol>
           <li>
             <span class="step-num">1</span>
             <div>
-              <strong>Confirmación</strong>
-              <p>Las tres partes confirman la operación antes de cualquier pago.</p>
+              <strong>{{ i18n.t('dashboard.step1Title') }}</strong>
+              <p>{{ i18n.t('dashboard.step1Text') }}</p>
             </div>
           </li>
           <li>
             <span class="step-num">2</span>
             <div>
-              <strong>Evaluación</strong>
-              <p>El backend valida monto, tope diario y destinatario. El tag se verifica antes de enviar.</p>
+              <strong>{{ i18n.t('dashboard.step2Title') }}</strong>
+              <p>{{ i18n.t('dashboard.step2Text') }}</p>
             </div>
           </li>
           <li>
             <span class="step-num">3</span>
             <div>
-              <strong>Liquidación</strong>
-              <p>En producción: transferencia wARS o wBRL en Celo mainnet con tag.</p>
+              <strong>{{ i18n.t('dashboard.step3Title') }}</strong>
+              <p>{{ i18n.t('dashboard.step3Text') }}</p>
             </div>
           </li>
         </ol>
       </section>
 
       <section class="card tech">
-        <h2>Stack</h2>
-        <ul class="tech-list">
-          <li>Celo mainnet</li>
-          <li>wARS / wBRL</li>
-          <li>ERC-8004</li>
-          <li>ERC-8021</li>
-          <li>Angular 20</li>
-        </ul>
+        <h2>{{ i18n.t('dashboard.juryTitle') }}</h2>
+        <p class="muted">{{ i18n.t('dashboard.juryNote') }}</p>
+        <details class="tech-details">
+          <summary>{{ i18n.t('dashboard.techSummary') }}</summary>
+          <dl class="tech-facts">
+            <div>
+              <dt>{{ i18n.t('dashboard.network') }}</dt>
+              <dd>{{ i18n.t('dashboard.celoMainnet', { chainId: chainId }) }}</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.t('dashboard.tokens') }}</dt>
+              <dd>wARS / wBRL (Ripio)</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.t('dashboard.identity') }}</dt>
+              <dd>
+                ERC-8004 ·
+                <a [href]="explorerAddress + agentWallet" target="_blank" rel="noopener noreferrer">
+                  {{ shortAddress(agentWallet) }}
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ i18n.t('dashboard.attributionTag') }}</dt>
+              <dd><code>{{ agentTag }}</code></dd>
+            </div>
+            <div class="span-2">
+              <dt>{{ i18n.t('dashboard.operationAddresses') }}</dt>
+              <dd>
+                @for (role of roles; track role) {
+                  <span class="addr-line">
+                    {{ roleLabel(role) }}: {{ selectedOperation().parties[role].address }}
+                  </span>
+                }
+              </dd>
+            </div>
+          </dl>
+        </details>
       </section>
     </aside>
   </div>
