@@ -195,7 +195,7 @@ code {
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(0, 0.8fr);
   gap: 32px;
-  align-items: end;
+  align-items: start;
   margin-bottom: 30px;
 }
 
@@ -243,6 +243,15 @@ code {
 .hero-stats {
   display: grid;
   gap: 10px;
+}
+
+.hero-logo {
+  display: block;
+  grid-column: 1 / -1;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid var(--border);
 }
 
 .stat {
