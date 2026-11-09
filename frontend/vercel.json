@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://agente-chasqui-tech.vercel.app/api/$1"
+      "destination": "https://agent-chasqui-backend.vercel.app/api/$1"
     },
     {
       "source": "/(.*)",
