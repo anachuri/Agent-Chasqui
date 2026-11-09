@@ -1,6 +1,6 @@
 # Chasqui Tech · Frontend
 
-SPA en Angular 20 para operar el agente de pagos de Chasqui Tech. Consume el endpoint de evaluación `https://agent-chasqui-backend.vercel.app/api/pay` (vía `/api/pay`) y muestra el resultado de cada evaluación.
+SPA en Angular 20 para operar el agente de pagos de Chasqui Tech. Consume el endpoint de evaluación `https://agente-chasqui-tech.vercel.app/api/pay` (vía `/api/pay`) y muestra el resultado de cada evaluación.
 
 La ruta `/como-funciona` es una página explicativa para el jurado: cuenta el problema, el flujo de un pago, los límites, la arquitectura y qué está implementado hoy.
 
@@ -60,13 +60,13 @@ Corren con Karma + Jasmine. También hay tests del servicio HTTP (`payment.servi
 Son **dos proyectos** independientes, ambos conectados al mismo repo:
 
 1. **Frontend**: Root Directory = `frontend`. Dominio: `https://agente-chasqui-tech.vercel.app`.
-2. **Backend**: Root Directory = `backend`. Dominio: `https://agent-chasqui-backend.vercel.app`.
+2. **Backend**: Root Directory = `backend`. Dominio: `https://agente-chasqui-tech.vercel.app`.
 
 `frontend/vercel.json` ya define:
 
 - build: `npm run build`
 - output: `dist/frontend/browser`
-- rewrite de `/api/*` a `https://agent-chasqui-backend.vercel.app/api/*`
+- rewrite de `/api/*` a `https://agente-chasqui-tech.vercel.app/api/*`
 - fallback de SPA a `index.html`
 
 `backend/vercel.json` solo instala lo necesario para `/api/pay` y publica `backend/public/agent.json` en la raíz del dominio del backend.
