@@ -88,4 +88,21 @@ test('tag: validación del código y chequeo del sufijo', () => {
   }
   assert.throws(() => assertTagged('0xa9059cbb00', SUFFIX), { message: 'TAG_NOT_APPENDED' });
   assert.doesNotThrow(() => assertTagged('0xa9059cbb008021deadbeef', SUFFIX));
+  test('si se envía pero falla el registro local, informa que requiere conciliación', async () => {
+  const { sent, deps } = setup({
+    store: {
+      spentToday: async () => 0n,
+      record: async () => {
+        throw new Error('disk full');
+      },
+    },
+  });
+
+  const r = await pay(deps, { to: TO, amount: '1' });
+
+  assert.equal(sent.length, 1);
+  assert.equal(r.status, 'sent-unrecorded');
+  assert.equal(r.hash, '0xhash');
+  assert.equal(r.code, 'LOCAL_RECORD_FAILED');
+});
 });

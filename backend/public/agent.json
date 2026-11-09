@@ -3,7 +3,7 @@
   "name": "Chasqui Tech",
   "description": "Agente que coordina y liquida pagos de operaciones de exportación e importación en stablecoins locales de Ripio (wBRL, wARS) sobre Celo, entre exportadores, importadores y transportistas, siempre dentro de límites fijos de código: tope por pago, presupuesto diario y destinatarios permitidos.",
   "services": [
-    { "name": "web", "endpoint": "https://agente-chasqui-tech.vercel.app" },
+    { "name": "web", "endpoint": "https://frontend-adssd0ubd-maxis-projects-f9ef08b4.vercel.app/" },
     { "name": "agentWallet", "endpoint": "eip155:42220:0x39A790f01989746EF4f43ec5E2233ebf18Cc229B" }
   ],
   "active": true,
